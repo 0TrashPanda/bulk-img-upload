@@ -1,0 +1,74 @@
+{
+    "albums": [
+      {
+        "name": "album1",
+        "images": [
+          {
+            "link": "https://i.imgur.com/0H49Lha.jpg",
+            "thumbnail" : "https://i.imgur.com/0H49Lham.jpg",
+            "alt" : "img"
+          },
+          {
+            "link": "https://i.imgur.com/1KjevDc.jpg",
+            "thumbnail" : "https://i.imgur.com/1KjevDcm.jpg",
+            "alt" : "img"
+          },
+          {
+            "link": "https://i.imgur.com/rj2PFuz.jpg",
+            "thumbnail" : "https://i.imgur.com/rj2PFuzm.jpg",
+            "alt" : "img"
+          }
+        ]
+      },
+      {
+        "name": "album2",
+        "images": [
+          {
+            "link": "https://i.imgur.com/IC8G93y.jpg",
+            "thumbnail" : "https://i.imgur.com/IC8G93ym.jpg",
+            "alt" : "img"
+          },
+          {
+            "link": "https://i.imgur.com/kvzdJRL.jpg",
+            "thumbnail" : "https://i.imgur.com/kvzdJRLm.jpg",
+            "alt" : "img"
+          },
+          {
+            "link": "https://i.imgur.com/0XXmVhg.jpg",
+            "thumbnail" : "https://i.imgur.com/0XXmVhgm.jpg",
+            "alt" : "img"
+          }
+        ]
+      },
+      {
+        "name": "album3",
+        "images": [
+          {
+            "link": "https://i.imgur.com/iQTOu61.jpg",
+            "thumbnail" : "https://i.imgur.com/iQTOu61m.jpg",
+            "alt" : "img"
+          },
+          {
+            "link": "https://i.imgur.com/MkQVYFO.jpg",
+            "thumbnail" : "https://i.imgur.com/MkQVYFOm.jpg",
+            "alt" : "img"
+          },
+          {
+            "link": "https://i.imgur.com/UKXYSUC.jpg",
+            "thumbnail" : "https://i.imgur.com/UKXYSUCm.jpg",
+            "alt" : "img"
+          },
+          {
+            "link": "https://i.imgur.com/68rbu8h.jpg",
+            "thumbnail" : "https://i.imgur.com/68rbu8hm.jpg",
+            "alt" : "img"
+          },
+          {
+            "link": "https://i.imgur.com/AY4PTD6.jpg",
+            "thumbnail" : "https://i.imgur.com/AY4PTD6m.jpg",
+            "alt" : "img"
+          }
+        ]
+      }
+    ]
+  }
