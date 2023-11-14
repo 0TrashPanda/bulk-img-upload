@@ -2,3 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+    .thumbnail {
+        @apply inline-block m-2 max-w-[300px] max-h-[300px] rounded-md shadow-lg;
+    }
+    .album {
+        @apply mt-2;
+    }
+
+    h2 {
+        @apply ml-2 leading-3
+    }
+}

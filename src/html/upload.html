@@ -1,35 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>upload images</title>
-    <link rel="stylesheet" href="main.css">
+    <link rel="icon" type="image/x-icon" href="https://i.imgur.com/L1Vssx3s.jpeg">
     <link href="/dist/output.css" rel="stylesheet">
-</head>
-<body class="p-4 bg-stone-50">
-    <h1 class="my-4 text-4xl">Upload images</h1>
-    <a class="my-2 p-2 bg-slate-400 rounded-md" href="/src/html/index.html">back</a>
-    <div class="max-w-2xl mx-auto p-16">
-        <div class="p-2 rounded-xl shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
-            <textarea class="border-2 border-stone-400 rounded-md" name="" id="" cols="30" rows="10"></textarea>
-            <div class="">
-                <div class="">
-                    <label for="">imgur</label>
-                    <input class="m-4" type="checkbox" name="" id="" checked>
-                </div>
-                <div class="">
-                    <label for="">checkbox</label>
-                    <input class="m-2 p-1 border rounded-sm" type="text" name="" id="">
-                </div>
-                <div class="">
-                    <label for="">checkbox</label>
-                    <input class="m-2 p-1 border rounded-sm" type="text" name="" id="">
-                </div>
-                <div class="flex justify-center">
-                    <button class="my-2 px-2 py-1 text-white border border-blue-600 bg-blue-500 rounded-lg" type="submit">submit</button>
-                </div>
+  </head>
+  <body class="p-4 bg-stone-50 font-roboto">
+    <div class="max-w-6xl mx-auto p-16">
+        <div class="p-2 rounded-lg shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+            <div class="m-2 flex justify-between">
+                <h1 class=" text-4xl">Upload images</h1>
+                <a class="my-auto p-2 px-4 text-white bg-slate-500 rounded-[.2rem]" href="/src/html/index.html">Back</a>
+            </div>
+            <div class="m-2">
+                <textarea class="my-2 w-full p-1 border-2 border-stone-400 rounded-[.2rem] resize-none" name="" id="imageLinksTextarea" rows="10" placeholder="Image links" ondrop="newLine(event)"></textarea>
+                <input class="my-2 p-1 w-full border-2 border-stone-400 rounded-[.2rem]" list="albums-datalist" id="searchInput" placeholder="Album" />
+                <datalist id="albums-datalist"></datalist>
+            </div>
+            <div class="flex justify-center">
+                <button class="my-2 p-2 px-4 text-white bg-blue-500 rounded-[.2rem]" type="submit" id="submitBtn" onclick="convertImageUrls()">Done</button>
+            </div>
         </div>
     </div>
-</body>
+
+  </body>
+  <script>
+    function newLine(event) {
+      event.preventDefault();
+      var data = event.dataTransfer.getData("text");
+      event.target.value += data + "\n";
+    }
+
+    function searchInputChanged() {
+      // Add your JavaScript logic here
+      var inputValue = document.getElementById('searchInput').value;
+    }
+
+    function genAlbumList(albums) {
+      const albumsList = document.getElementById('albums-datalist');
+      albums.forEach(album => {
+        const albumOption = document.createElement('option');
+        albumOption.value = album.name;
+        albumsList.appendChild(albumOption);
+      });
+    }
+
+    // Fetch the JSON data from images.json
+    fetch('/images.json')
+      .then(response => response.json())
+      .then(data => genAlbumList(data.albums))
+      .catch(error => console.error('Error fetching data:', error));
+
+
+      
+    // DANGER: GPT WORKS AHEAD
+    function convertImageUrls() {
+      const textarea = document.getElementById('imageLinksTextarea');
+      const albumInput = document.getElementById('searchInput');
+      const albumsDatalist = document.getElementById('albums-datalist');
+    
+      // Fetch existing data from images.json
+      fetch('/images.json')
+        .then(response => response.json())
+        .then(existingData => {
+          const albumName = albumInput.value || albumsDatalist.value;
+    
+          // Process existing albums
+          let existingAlbum = existingData.albums.find(album => album.name === albumName);
+    
+          if (!existingAlbum) {
+            // If the album doesn't exist, create a new one
+            existingAlbum = {
+              name: albumName || "default",
+              images: []
+            };
+            existingData.albums.push(existingAlbum);
+          }
+    
+          // Process new images from the textarea
+          const newImages = textarea.value.split('\n').map(line => {
+            if (line.trim() !== '') {
+              const imageUrl = line.replace(/^(https?:\/\/)?(?:www\.)?(?:i\.)?imgur\.com\/(.+?)(?:\.(?:png|jpeg|jpg))?$/i, 'https://i.imgur.com/$2');
+              return {
+                link: `${imageUrl}.jpeg`,
+                thumbnail: `${imageUrl}l.jpeg`,
+                alt: "img"
+              };
+            }
+            return null;
+          }).filter(image => image !== null);
+    
+          // Merge new images into the existing album
+          existingAlbum.images = [...existingAlbum.images, ...newImages];
+    
+          // Update the JSON data
+          const jsonString = JSON.stringify(existingData, null, 2);
+          console.log(jsonString);
+    
+          alert('Images uploaded successfully!');
+        })
+        .catch(error => console.error('Error fetching existing data:', error));
+    }
+  </script>
 </html>
