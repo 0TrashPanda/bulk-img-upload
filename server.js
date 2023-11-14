@@ -12,6 +12,10 @@ app.use(cors()); // Use cors middleware to handle cors headers
 // Serve your static files (like images.json)
 app.use(express.static(__dirname));
 
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/src/html/index.html');
+});
+
 app.get('/images.json', async (req, res) => {
   try {
     const data = await fs.readFile(path.join(__dirname, 'images.json'), 'utf-8');
