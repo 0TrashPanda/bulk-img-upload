@@ -7,7 +7,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(cors()); // Use cors middleware to handle CORS headers
+app.use(cors()); // Use cors middleware to handle cors headers
 
 // Serve your static files (like images.json)
 app.use(express.static(__dirname));
