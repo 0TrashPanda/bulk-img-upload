@@ -32,12 +32,12 @@
       var data = event.dataTransfer.getData("text");
       event.target.value += data + "\n";
     }
-
+    
     function searchInputChanged() {
       // Add your JavaScript logic here
       var inputValue = document.getElementById('searchInput').value;
     }
-
+    
     function genAlbumList(albums) {
       const albumsList = document.getElementById('albums-datalist');
       albums.forEach(album => {
@@ -46,63 +46,72 @@
         albumsList.appendChild(albumOption);
       });
     }
-
+    
     // Fetch the JSON data from images.json
     fetch('/images.json')
       .then(response => response.json())
       .then(data => genAlbumList(data.albums))
       .catch(error => console.error('Error fetching data:', error));
-
-
-      
+    
     // DANGER: GPT WORKS AHEAD
     async function convertImageUrls() {
       const textarea = document.getElementById('imageLinksTextarea');
       const albumInput = document.getElementById('searchInput');
       const albumsDatalist = document.getElementById('albums-datalist');
     
-      // Fetch existing data from images.json
-      fetch('/images.json')
-        .then(response => response.json())
-        .then(existingData => {
-          const albumName = albumInput.value || albumsDatalist.value;
+      try {
+        // Fetch existing data from images.json
+        const existingResponse = await fetch('/images.json');
+        const existingData = await existingResponse.json();
     
-          // Process existing albums
-          let existingAlbum = existingData.albums.find(album => album.name === albumName);
+        const albumName = albumInput.value || albumsDatalist.value;
     
-          if (!existingAlbum) {
-            // If the album doesn't exist, create a new one
-            existingAlbum = {
-              name: albumName || "default",
-              images: []
+        // Process existing albums
+        let existingAlbum = existingData.albums.find(album => album.name === albumName);
+    
+        if (!existingAlbum) {
+          // If the album doesn't exist, create a new one
+          existingAlbum = {
+            name: albumName || "default",
+            images: []
+          };
+          existingData.albums.push(existingAlbum);
+        }
+    
+        // Process new images from the textarea
+        const newImages = textarea.value.split('\n').map(line => {
+          if (line.trim() !== '') {
+            const imageUrl = line.replace(/^(https?:\/\/)?(?:www\.)?(?:i\.)?imgur\.com\/(.+?)(?:\.(?:png|jpeg|jpg))?$/i, 'https://i.imgur.com/$2');
+            return {
+              link: `${imageUrl}.jpeg`,
+              thumbnail: `${imageUrl}l.jpeg`,
+              alt: "img"
             };
-            existingData.albums.push(existingAlbum);
           }
+          return null;
+        }).filter(image => image !== null);
     
-          // Process new images from the textarea
-          const newImages = textarea.value.split('\n').map(line => {
-            if (line.trim() !== '') {
-              const imageUrl = line.replace(/^(https?:\/\/)?(?:www\.)?(?:i\.)?imgur\.com\/(.+?)(?:\.(?:png|jpeg|jpg))?$/i, 'https://i.imgur.com/$2');
-              return {
-                link: `${imageUrl}.jpeg`,
-                thumbnail: `${imageUrl}l.jpeg`,
-                alt: "img"
-              };
-            }
-            return null;
-          }).filter(image => image !== null);
+        // Merge new images into the existing album
+        existingAlbum.images = [...existingAlbum.images, ...newImages];
     
-          // Merge new images into the existing album
-          existingAlbum.images = [...existingAlbum.images, ...newImages];
+        // Update the JSON data on the server
+        const updateResponse = await fetch('http://localhost:3000/update-images', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(existingData),
+        });
     
-          // Update the JSON data
-          const jsonString = JSON.stringify(existingData, null, 2);
-          console.log(jsonString);
-    
+        if (updateResponse.ok) {
           alert('Images uploaded successfully!');
-        })
-      .catch(error => console.error('Error fetching existing data:', error));
-
+        } else {
+          alert('Failed to update images.json');
+        }
+      } catch (error) {
+        console.error('Error fetching or updating existing data:', error);
+      }
     }
+    
   </script>
 </html>
